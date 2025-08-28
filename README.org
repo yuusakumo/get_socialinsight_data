@@ -1,0 +1,56 @@
+* get_social_insight_data.py
+** 概要
+ - SocialInsight から X の発言数の時系列データを取得し，そのデータを標準出力する
+   - 「事前準備」の項目にある以下を行っておく必要がある
+     - Chrome ドライバのインストール
+     - 必要な Python モジュールのインストール
+** 事前準備
+ - Chrome のバージョンにあったドライバを入手してディレクトリ driver に保存しておく必要がある
+   - ドライバは，https://googlechromelabs.github.io/chrome-for-testing/ から入手できる
+ - 必要な Python モジュールとして以下をインストールしておく
+   - argparse
+   - datetime
+   - getpass
+   - selenium
+ - Social Insight にログインした状態にしておく
+ - Social Insight のクチコミ分析で，取得したいキーワード keyword を登録しておく
+   - ここで登録した keyword が get_social_insight_data.py の引数で指定できる
+  
+** 使い方
+ - 実行コマンド
+    #+BEGIN_EXAMPLE
+    ./get_social_insight_data.py $keyword $st_date $ed_date 
+    #+END_EXAMPLE
+    
+ - 入力パラメータ 
+    | 引数名  | 意味                                         |
+    |---------+----------------------------------------------|
+    | keyword | 取得する検索キーワード                       |
+    | st_date | データ取得期間の開始日 (Format: YYYYY-MM-DD) |
+    | ed_date | データ取得期間の終了日 (Format: YYYYY-MM-DD) |
+    |---------+----------------------------------------------|
+
+ - 出力 (※ get_google_trends_data.py と同じ)
+   - 標準出力
+     - DATA: から始まる行に，検索スコアの時系列データ(スケールを統一したもの)
+       - 各行を以下のフォーマットで出力する
+         - ※ PERIOD: スケールを統一できた期間の番号，DATE: 日時(Format: YYYY-MM-DDTXX), DATA: 検索スコア
+         #+BEGIN_EXAMPLE
+         DATA: period PERIOD t DATE data DATA
+         #+END_EXAMPLE
+     - ALL_DATA: から始まる行には，全ての period の結果を出力
+   - 標準エラー出力
+     - NOTICE: とか ERROR: で進行状況やエラーを出力する
+ - 補足
+   - Social Insight から取得したデータは，ディレクトリ "SI_keyword/csv" に保存される
+     - 2025 年 4 月 7 日のデータは，csv ファイル "data_2025-04-07.csv" に保存される
+   - Social Insight のサイトの表示が重いと，エラーで終了する
+     - 同じデータは再度取得しないため，エラーがでたら，同じ実行コマンドを実行すれればエラーが発生したところから再度データを取得する
+       
+** どのようにデータを取得しているか？
+ - Pytyon のモジュール Selenium を使って，Social Insight のサイトから自動でデータを取得している
+   - Selenium は，Python プログラムからブラウザの自動操作を行ってくれるモジュール
+     - get_social_insight_data.py では，デフォルトで Google Chrome をブラウザとして使う
+ - Social Insight では，一度に，1 日間隔でしか，1 時間毎の時間粒度のデータを取得できない
+   - st_date から ed_date までを 1 日ごとに取得し，それらのデータをつなげていく
+
