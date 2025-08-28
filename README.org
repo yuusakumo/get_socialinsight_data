@@ -4,6 +4,7 @@
    - 「事前準備」の項目にある以下を行っておく必要がある
      - Chrome ドライバのインストール
      - 必要な Python モジュールのインストール
+     - Social Insight のログインとキーワード登録
 ** 事前準備
  - Chrome のバージョンにあったドライバを入手してディレクトリ driver に保存しておく必要がある
    - ドライバは，https://googlechromelabs.github.io/chrome-for-testing/ から入手できる
